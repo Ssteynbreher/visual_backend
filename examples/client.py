@@ -1,27 +1,16 @@
 import socket
-import sys
 
+# Создаем сокет
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-def run_client(host='127.0.0.1', port=12345):
-    """Запуск TCP клиента"""
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
-        try:
-            client_socket.connect((host, port))
-            print(f"Подключение к серверу {host}:{port}")
+# Подключаемся к серверу
+client_socket.connect(('localhost', 12345))
 
-            message = "Hello World!"
-            client_socket.sendall(message.encode('utf-8'))
-            print(f"Отправлено серверу: {message}")
+# Отправляем данные серверу много раз
+for i in range(10):  # Отправим 10 сообщений
+    message = f'Hello, server!'.encode()
+    client_socket.sendall(message)
+    print(f"Отправлено: {message}")
 
-            data = client_socket.recv(1024)
-            response = data.decode('utf-8')
-            print(f"Получено от сервера: {response}")
-
-        except ConnectionRefusedError:
-            print(f"Не удалось подключиться к {host}:{port}")
-            print("   Убедитесь, что сервер запущен")
-
-
-if __name__ == "__main__":
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 12345
-    run_client(port=port)
+# Закрываем соединение
+client_socket.close()
